@@ -133,7 +133,7 @@ under the License.
 			<activation>
 				<property>
 					<!-- Please do not remove the 'hadoop1' comment. See ./tools/generate_specific_pom.sh -->
-					<!--hadoop1--><name>!hadoop.profile</name>
+					<name>hadoop.profile</name><value>1</value>
 				</property>
 			</activation>
 			<dependencies>
@@ -146,7 +146,7 @@ under the License.
 			<activation>
 				<property>
 					<!-- Please do not remove the 'hadoop1' comment. See ./tools/generate_specific_pom.sh -->
-					<!--hadoop2--><name>hadoop.profile</name><value>2</value>
+					<name>!hadoop.profile</name>
 				</property>
 			</activation>
 			<dependencies>
@@ -215,7 +215,7 @@ under the License.
 			<activation>
 				<property>
 					<!-- Please do not remove the 'hadoop1' comment. See ./tools/generate_specific_pom.sh -->
-					<!--hadoop2--><name>hadoop.profile</name><value>2</value>
+					<name>!hadoop.profile</name>
 				</property>
 			</activation>
 			<dependencies>

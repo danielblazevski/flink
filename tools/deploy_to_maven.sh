@@ -54,12 +54,12 @@ function getVersion() {
 # this will take a while
 CURRENT_FLINK_VERSION=`getVersion`
 if [[ "$CURRENT_FLINK_VERSION" == *-SNAPSHOT ]]; then
-	CURRENT_FLINK_VERSION_YARN=${CURRENT_FLINK_VERSION/-incubating-SNAPSHOT/-hadoop2-incubating-SNAPSHOT}
+	CURRENT_FLINK_VERSION_HADOOP1=${CURRENT_FLINK_VERSION/-incubating-SNAPSHOT/-hadoop1-incubating-SNAPSHOT}
 else
-	CURRENT_FLINK_VERSION_YARN="$CURRENT_FLINK_VERSION-hadoop2"
+	CURRENT_FLINK_VERSION_HADOOP1="$CURRENT_FLINK_VERSION-hadoop1"
 fi
 
-echo "detected current version as: '$CURRENT_FLINK_VERSION' ; yarn: $CURRENT_FLINK_VERSION_YARN "
+echo "detected current version as: '$CURRENT_FLINK_VERSION' ; hadoop1: $CURRENT_FLINK_VERSION_HADOOP1 "
 
 # Check if push/commit is eligible for pushing
 echo "Job: $TRAVIS_JOB_NUMBER ; isPR: $TRAVIS_PULL_REQUEST"
@@ -71,18 +71,16 @@ if [[ $TRAVIS_PULL_REQUEST == "false" ]] ; then
 	# 
 
 	if [[ $TRAVIS_JOB_NUMBER == *1 ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $CURRENT_FLINK_VERSION == *SNAPSHOT* ]] ; then 
-		# Deploy regular hadoop v1 to maven
-		mvn -Pdocs-and-source -DskipTests -Drat.ignoreErrors=true deploy --settings deploysettings.xml; 
+		# Deploy hadoop v1 to maven
+		echo "Generating poms for hadoop1"
+		./tools/generate_specific_pom.sh $CURRENT_FLINK_VERSION $CURRENT_FLINK_VERSION_HADOOP1 pom.hadoop1.xml
+		mvn -B -f pom.hadoop1.pom -Pdocs-and-source -DskipTests -Drat.ignoreErrors=true deploy --settings deploysettings.xml; 
 	fi
 
 	if [[ $TRAVIS_JOB_NUMBER == *4 ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $CURRENT_FLINK_VERSION == *SNAPSHOT* ]] ; then 
 		# deploy hadoop v2 (yarn)
-		echo "Generating poms for hadoop-yarn."
-		./tools/generate_specific_pom.sh $CURRENT_FLINK_VERSION $CURRENT_FLINK_VERSION_YARN
-		# all these tweaks assume a yarn build.
-		# performance tweaks here: no "clean deploy" so that actually nothing is being rebuild (could cause wrong poms inside the jars?)
-		# skip tests (they were running already)
-		mvn -B -f pom.hadoop2.xml -DskipTests -Pdocs-and-source -Drat.ignoreErrors=true deploy --settings deploysettings.xml; 
+		echo "deploy standard version (hadoop2)"
+		mvn -B -DskipTests -Pdocs-and-source -Drat.ignoreErrors=true deploy --settings deploysettings.xml; 
 	fi
 
 	# The block below took care of deploying javadoc to github.io. We now host the javadocs on the website.
