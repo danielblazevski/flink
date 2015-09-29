@@ -10,15 +10,15 @@ The brute-force approach to finding the k-nearest neighbors computes the pairwis
 
 ![](img/brute-force.png)
 
-To reduce the number of distance computations needed for the kNN query, we partition the training set using a quadtree data structure.  Once a bounding box of the points has more than some specified value `maxPerBox` of points in the training set, the box is partitioned into equal sub-boxes; and once each sub-box has more than `maxPerBox` training points, it is further partioned, as demnonstrated by the green sub-boxes in the diagram:
+To reduce the number of distance computations needed for the kNN query, the training set is partioned using a quadtree data structure.  Once a box has more than some specified value `maxPerBox` of training set points, the box is partitioned into equal sub-boxes; and once each sub-box has more than `maxPerBox` training points, it is further partioned, as demnonstrated by the green sub-boxes in the diagram:
 
 ![](img/quadtree.png)
 
-The above picture of partitioning the training set into smaller sub-boxes is appealing, though there are some notable challenges in using the quadtree for the kNN query, namely the some of the k-nearest neighbors may no be in the minimal bounding box of the gold star.  For exmaple, the following digram shows red points in the training set that are closest to the test point:
+The intuitive idea of partitioning the training set into smaller sub-boxes is appealing, though there are some notable challenges in using the quadtree for the kNN query, namely some of the k-nearest neighbors may not be in the minimal bounding box of the gold star.  The following digram, for example, shows red points in the training set that are closest to the test point:
 
 ![](img/quadtree-challenge.png)
 
-A clean efficient way to search both in a test point's minimal bounding box *and* surrounding area is needed.  Defining the "surounding area" of a test point is the most delicate part.  The leaf-nodes of the quadtree are the only nodes containing a non-empty collection of objects in the corresponding rectangle, and the key to define the "surrounding area" is to construct a min-heap on the leaf nodes to select boxes that are closest to the test point.  
+A clean efficient way to search both in a test point's minimal bounding box *and* surrounding area is needed.  Defining the "surounding area" of a test point is in fact the most delicate part.  The leaf-nodes of the quadtree are the only nodes containing a non-empty collection of objects in the training set, and the key to defining the "surrounding area" of a test point is to construct a min-heap on the leaf nodes to select boxes that are closest to the test point.  
 
 In Scala, the min-heap is defined on tuples of doubles and nodes of the tree
 ```scala
