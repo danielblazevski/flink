@@ -8,7 +8,7 @@ I incorporated a quadtree data structure to improve the efficiency of the kNN qu
 
 The brute-force approach to finding the k-nearest neighbors computes the pairwise distance for a given test point to all points in the training set
 
-![](img/brute-force-diagram.png)
+![](img/brute-force.png)
 
 To reduce the number of distance computations needed for the kNN query, we partition the training set using a quadtree data structure.  Once a bounding box of the points has more than some specified value `maxPerBox` of points in the training set, the box is partitioned into equal sub-boxes; and once each sub-box has more than `maxPerBox` training points, it is further partioned, as demnonstrated by the green sub-boxes in the diagram:
 
