@@ -4,7 +4,7 @@ For my Insight Data Engineering project, I coordinated with the Flink community 
 
 https://github.com/chiwanpark/flink/tree/FLINK-1745/flink-staging/flink-ml/src/main/scala/org/apache/flink/ml/nn
 
-I incorporated a quadtree data structure to improve the efficiency of the kNN query.
+I incorporated a quadtree data structure to improve the efficiency of the kNN query.  I am currently in the progress of finalizing the data strucutre and algorithm to submit a pull request.
 
 The brute-force approach to finding the k-nearest neighbors computes the pairwise distance for a given test point to all points in the training set
 
