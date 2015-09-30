@@ -33,3 +33,8 @@ where `DenseVector` is a Flink data type corresponding the the object type.  The
 
 ## Running the kNN algorithm; Building Flink
 First Flink needs to be built from Source, as this is a development brach of the Flink repo.  See the README.md file in the root directory of this repo.  I personally found it easieist to add on top of Flink by using IntelliJ
+
+
+## Link to presentation
+Here is a link for a slideshare presentation about my project:
+http://www.slideshare.net/danielblazevski/dan-blazevski-insightdemo
