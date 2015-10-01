@@ -128,6 +128,7 @@ object KNN {
   /** [[FitOperation]] which trains a KNN based on the given training data set.
     * @tparam T Subtype of [[org.apache.flink.ml.math.Vector]]
     */
+
   implicit def fitKNN[T <: Vector : TypeInformation] = new FitOperation[KNN, T] {
     override def fit(
         instance: KNN,
@@ -150,6 +151,7 @@ object KNN {
     * @tparam T Subtype of [[Vector]]
     * @return The given testing data set with k-nearest neighbors
     */
+
   implicit def predictValues[T <: Vector : ClassTag : TypeInformation] = {
     new PredictDataSetOperation[KNN, T, (Vector, Array[Vector])] {
       override def predictDataSet(
@@ -180,30 +182,23 @@ object KNN {
 
                   var MinVec = new ListBuffer[Double]
                   var MaxVec = new ListBuffer[Double]
-                  var bFiltVect = new ListBuffer[DenseVector]
+                  var trainingFiltered = new ListBuffer[DenseVector]
 
                   val b1 = BigDecimal(math.pow(4, training.values.head.size)) * BigDecimal(testing.values.length) * BigDecimal(math.log(training.values.length))
                   val b2 = BigDecimal(testing.values.length) * BigDecimal(training.values.length)
 
-                  var BruteOrQuad =  b1 < b2
-                  var Br = b1 - b2
 
-                  /*
-                  println(" testing.values.length         " + testing.values.length )
-                  println(" training.values.length           " + training.values.length )
-                  println("training.values.head.size            " + training.values.head.size)
-                  println("diff =  " + Br)
-                  BruteOrQuad = true
+                  // use a quadtree if (4^dim)Ntest*log(Ntrain) < Ntest*Ntrain, and distance is Euclidean
+                  val BruteOrQuad = b1 < b2 &&
+                    ( metric.isInstanceOf[EuclideanDistanceMetric] || metric.isInstanceOf[SquaredEuclideanDistanceMetric])
 
-                  if(BruteOrQuad){
-                    println("using QuadTree! ")
-                    //println("dimension =  " + training.values.head.size)
-                  } else{
-                    println("using Brute Force!")
-                    //println("dimension =  " + training.values.head.size)
+                  if (!BruteOrQuad) {
+                    for (v <- training.values) {
+                      trainingFiltered = trainingFiltered :+ v.asInstanceOf[DenseVector]
+                    }
                   }
-                  */
 
+                  // define a bounding box for the quadtree
                     for (i <- 0 to training.values.head.size - 1) {
                       val minTrain = training.values.map(x => x(i)).min - 0.01
                       val minTest = testing.values.map(x => x._2(i)).min - 0.01
@@ -216,7 +211,7 @@ object KNN {
 
                     }
 
-                  var trainingQuadTree = new QuadTree(MinVec, MaxVec)
+                  var trainingQuadTree = new QuadTree(MinVec, MaxVec,metric)
 
                   if (trainingQuadTree.maxPerBox < k) {
                       trainingQuadTree.maxPerBox = k
@@ -234,22 +229,18 @@ object KNN {
                         /////  Find siblings' objects and do kNN there
                         val siblingObjects = trainingQuadTree.searchNeighborsSiblingQueue(a._2.asInstanceOf[DenseVector])
 
-                        /// do KNN query on siblingObjects and get max distance of kNN
+                        // do KNN query on siblingObjects and get max distance of kNN
+                        // then rad is good choice for a neighborhood to do a local kNN search
                         val knnSiblings = siblingObjects.map(
-                          v => SquaredEuclideanDistanceMetric().distance(a._2, v)
+                          v => metric.distance(a._2, v)
                         ).sortWith(_ < _).take(k)
 
                         val rad = knnSiblings.last
+                        trainingFiltered = trainingQuadTree.searchNeighbors(a._2.asInstanceOf[DenseVector], rad)
 
-                        var bFiltVect = trainingQuadTree.searchNeighbors(a._2.asInstanceOf[DenseVector], math.sqrt(rad))
-                      }
-                      else {
-                        for (v <- training.values){
-                          bFiltVect :+ v
-                        }
                       }
 
-                      for (b <- bFiltVect) {
+                      for (b <- trainingFiltered) {
                         // (training vector, input vector, input key, distance)
                         queue.enqueue((b, a._2, a._1, metric.distance(b, a._2)))
                         if (queue.size > k) {
