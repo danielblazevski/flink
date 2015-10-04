@@ -26,7 +26,7 @@ The kNN algorithm is one of the fundamental classification algorithms, and has a
 Given a training set `A` and test set `B`, the kNN query can formally be stated as follows:  form the set `(b, A_b)` of tuples of points `b` in `B` and the k geometrically closest points `A_b` in `A` to `b`.  
 
 The brute-force method computes the distance between a given test point and *all* the points in the training set
-![](img/brute-force.png)
+![](img/brute-force-refined.png)
 
 Even for a modest number of points -- e.g. 50,000 test and training points -- the brute-force method can take hours to run on a single CPU.  
 
@@ -47,7 +47,7 @@ To reduce the complexity of the kNN query, a quadtree is formed for each block `
 
 A quadtree is a dymically contructed object on the training set, and start by forming a bounding box on the training set: once the boundign box has more than some specified value `maxPerBox` of training set points, the box is partitioned into equal sub-boxes.  Once each sub-box has more than `maxPerBox` training points, it is further partioned, as demnonstrated by the green sub-boxes in the diagram
 
-![](img/quadtree.png)
+![](img/quadtree-refined.png)
 
 The intuitive idea of partitioning the training set into smaller sub-boxes is appealing, though there are some notable challenges in using the quadtree for the kNN query, namely some of the k-nearest neighbors may not be in the minimal bounding box of the gold star.  The following digram, for example, shows red points in the training set that are closest to the test point:
 
