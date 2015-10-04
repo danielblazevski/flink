@@ -41,5 +41,6 @@ First Flink needs to be built from Source, as this is a development brach of the
 
 
 ## Link to presentation
-Here is a link for a slideshare presentation about my project:
+Here are links for a slideshare presentation about my project (github.io renders better, esp the tree edges on the slide titled "Challenge":
 http://www.slideshare.net/danielblazevski/dan-blazevski-insightdemo
+http://danielblazevski.github.io
