@@ -24,14 +24,13 @@ import org.apache.flink.api.scala.DataSetUtils._
 import org.apache.flink.api.scala._
 import org.apache.flink.ml.common._
 import org.apache.flink.ml.math.Vector
-import org.apache.flink.ml.metrics.distances.{SquaredEuclideanDistanceMetric, DistanceMetric, EuclideanDistanceMetric}
+import org.apache.flink.ml.metrics.distances.{SquaredEuclideanDistanceMetric,
+DistanceMetric, EuclideanDistanceMetric}
 import org.apache.flink.ml.pipeline.{FitOperation, PredictDataSetOperation, Predictor}
 import org.apache.flink.util.Collector
 
-
 import org.apache.flink.ml.nn.util.QuadTree
 import scala.collection.mutable.ListBuffer
-import org.apache.flink.ml.math.DenseVector
 
 
 import scala.collection.mutable
@@ -105,6 +104,16 @@ class KNN extends Predictor[KNN] {
     parameters.add(Blocks, n)
     this
   }
+
+  /**
+   * Sets the Boolean variable that decides whether to use the QuadTree or not
+    */
+  def setUseQuadTree(useQuadTree: Boolean): KNN = {
+    parameters.add(useQuadTreeParam, useQuadTree)
+    this
+  }
+
+
 }
 
 object KNN {
@@ -120,6 +129,11 @@ object KNN {
   case object Blocks extends Parameter[Int] {
     val defaultValue: Option[Int] = None
   }
+
+  case object useQuadTreeParam extends Parameter[Boolean] {
+    val defaultValue: Option[Boolean] = None
+  }
+
 
   def apply(): KNN = {
     new KNN()
@@ -182,34 +196,33 @@ object KNN {
 
                   var MinVec = new ListBuffer[Double]
                   var MaxVec = new ListBuffer[Double]
-                  var trainingFiltered = new ListBuffer[DenseVector]
+                  var trainingFiltered = new ListBuffer[Vector]
 
-                  val b1 = BigDecimal(math.pow(4, training.values.head.size)) * BigDecimal(testing.values.length) * BigDecimal(math.log(training.values.length))
-                  val b2 = BigDecimal(testing.values.length) * BigDecimal(training.values.length)
+                  // use a quadtree if (4^dim)Ntest*log(Ntrain)
+                  // < Ntest*Ntrain, and distance is Euclidean
+                  val useQuadTree = resultParameters.get(useQuadTreeParam).getOrElse(
+                    training.values.head.size + math.log(math.log(training.values.length)/
+                      math.log(4.0)) < math.log(training.values.length)/math.log(4.0) &&
+                    (metric.isInstanceOf[EuclideanDistanceMetric] ||
+                      metric.isInstanceOf[SquaredEuclideanDistanceMetric]))
 
-
-                  // use a quadtree if (4^dim)Ntest*log(Ntrain) < Ntest*Ntrain, and distance is Euclidean
-                  val BruteOrQuad = b1 < b2 &&
-                    ( metric.isInstanceOf[EuclideanDistanceMetric] || metric.isInstanceOf[SquaredEuclideanDistanceMetric])
-
-                  if (!BruteOrQuad) {
+                  if (!useQuadTree) {
                     for (v <- training.values) {
-                      trainingFiltered = trainingFiltered :+ v.asInstanceOf[DenseVector]
+                      trainingFiltered = trainingFiltered :+
+                        v.asInstanceOf[Vector]
                     }
                   }
+                    // define a bounding box for the quadtree
+                  for (i <- 0 to training.values.head.size - 1) {
+                    val minTrain = training.values.map(x => x(i)).min - 0.01
+                    val minTest = testing.values.map(x => x._2(i)).min - 0.01
 
-                  // define a bounding box for the quadtree
-                    for (i <- 0 to training.values.head.size - 1) {
-                      val minTrain = training.values.map(x => x(i)).min - 0.01
-                      val minTest = testing.values.map(x => x._2(i)).min - 0.01
+                    val maxTrain = training.values.map(x => x(i)).max + 0.01
+                    val maxTest = testing.values.map(x => x._2(i)).max + 0.01
 
-                      val maxTrain = training.values.map(x => x(i)).max + 0.01
-                      val maxTest = testing.values.map(x => x._2(i)).max + 0.01
-
-                      MinVec = MinVec :+ Array(minTrain, minTest).min
-                      MaxVec = MaxVec :+ Array(maxTrain, maxTest).max
-
-                    }
+                    MinVec = MinVec :+ Array(minTrain, minTest).min
+                    MaxVec = MaxVec :+ Array(maxTrain, maxTest).max
+                  }
 
                   var trainingQuadTree = new QuadTree(MinVec, MaxVec,metric)
 
@@ -217,26 +230,28 @@ object KNN {
                       trainingQuadTree.maxPerBox = k
                     }
 
-                    if (BruteOrQuad){
+                    if (useQuadTree){
                       for (v <- training.values) {
-                        trainingQuadTree.insert(v.asInstanceOf[DenseVector])
+                        trainingQuadTree.insert(v.asInstanceOf[Vector])
                       }
                   }
 
                     for (a <- testing.values) {
 
-                      if (BruteOrQuad) {
-                        /////  Find siblings' objects and do kNN there
-                        val siblingObjects = trainingQuadTree.searchNeighborsSiblingQueue(a._2.asInstanceOf[DenseVector])
+                      if (useQuadTree) {
+                        /////  Find siblings' objects and do local kNN there
+                        val siblingObjects =
+                          trainingQuadTree.searchNeighborsSiblingQueue(a._2.asInstanceOf[Vector])
 
                         // do KNN query on siblingObjects and get max distance of kNN
-                        // then rad is good choice for a neighborhood to do a local kNN search
-                        val knnSiblings = siblingObjects.map(
-                          v => metric.distance(a._2, v)
+                        // then rad is good choice for a neighborhood to do a refined
+                        // local kNN search
+                        val knnSiblings = siblingObjects.map(v => metric.distance(a._2, v)
                         ).sortWith(_ < _).take(k)
 
                         val rad = knnSiblings.last
-                        trainingFiltered = trainingQuadTree.searchNeighbors(a._2.asInstanceOf[DenseVector], rad)
+                        trainingFiltered =
+                          trainingQuadTree.searchNeighbors(a._2.asInstanceOf[Vector],rad)
 
                       }
 
