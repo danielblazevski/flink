@@ -30,6 +30,11 @@ The `Double` of the tuple is defined as a suitable notion of the distance from a
 ```
 where `DenseVector` is a Flink data type corresponding the the object type.  The defining property of `minDist` is that every point inside the rectangle has distance to `obj` greater than `minDist`.  
 
+##Tests
+Many tests and files used to bencmark the kNN algorithm can be found here:
+https://github.com/danielblazevski/flink/tree/FLINK-1745-devel/flink-staging/flink-ml/src/test/scala/org/apache/flink/ml/nn
+
+The benchmark files will be removed when the pull request is made to FLINK.
 
 ## Running the kNN algorithm; Building Flink
 First Flink needs to be built from Source, as this is a development brach of the Flink repo.  See the README.md file in the root directory of this repo.  I personally found it easieist to add on top of Flink by using IntelliJ
