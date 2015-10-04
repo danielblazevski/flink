@@ -49,10 +49,8 @@ class KNNBenchmark_2Guass extends FlatSpec {
 ///////////////////////////////////////////////////
   val rSeq12 = Seq.fill(nFill)(DenseVector(r.nextGaussian, r.nextGaussian))
   val rSeq22 = Seq.fill(nFill)(DenseVector(r.nextGaussian + 5.0, r.nextGaussian + 2.0))
-
   val rSeq2 = rSeq12 ++ rSeq22
 
-  /// GENERATE RANDOM SET OF POINTS IN [0,1]x[0,1]
   val trainingSet2 = env.fromCollection(rSeq2)
 
   var rSeqTest2 = Seq.fill(2*nFill)(DenseVector(r.nextGaussian, r.nextGaussian))
@@ -62,10 +60,8 @@ class KNNBenchmark_2Guass extends FlatSpec {
   ////////////////////////
   val rSeq13= Seq.fill(nFill)(DenseVector(r.nextGaussian, r.nextGaussian))
   val rSeq23 = Seq.fill(nFill)(DenseVector(0.5*r.nextGaussian + 50.0, 0.5*r.nextGaussian + 20.0))
-
   val rSeq3 = rSeq13 ++ rSeq23
 
-  /// GENERATE RANDOM SET OF POINTS IN [0,1]x[0,1]
   val trainingSet3 = env.fromCollection(rSeq3)
 
   var rSeqTest3 = Seq.fill(2*nFill)(DenseVector(1*r.nextGaussian, 1*r.nextGaussian))
@@ -74,90 +70,68 @@ class KNNBenchmark_2Guass extends FlatSpec {
 /////////////////////////////////////////
  val rSeq14= Seq.fill(nFill)(DenseVector(r.nextGaussian, r.nextGaussian))
   val rSeq24 = Seq.fill(nFill)(DenseVector(0.5*r.nextGaussian + 500.0, 0.5*r.nextGaussian + 200.0))
-
   val rSeq4 = rSeq14 ++ rSeq24
 
-  /// GENERATE RANDOM SET OF POINTS IN [0,1]x[0,1]
   val trainingSet4 = env.fromCollection(rSeq4)
 
   var rSeqTest4 = Seq.fill(2*nFill)(DenseVector(2*r.nextGaussian, 2*r.nextGaussian))
   val testingSet4 = env.fromCollection(rSeqTest4)
 
-  /////////////////////////////////////////2d
+  /////////////////////////////////////////1
 
   var t0 = System.nanoTime()
-  //// ACTUAL CALL TO kNN
-  ///FIRST SET UP PARAMETERS
   val knn = KNN()
     .setK(3)
     .setBlocks(4)
     .setDistanceMetric(SquaredEuclideanDistanceMetric())
 
-  // ACTUAL kNN COMPUTATION
-  // run knn join
   knn.fit(trainingSet)
   val result = knn.predict(testingSet).collect()
 
   var tf = System.nanoTime()
 
 
-  /////////////////////////////////////////2d
+  /////////////////////////////////////////2
 
-  var t02D = System.nanoTime()
-  //// ACTUAL CALL TO kNN
-  ///FIRST SET UP PARAMETERS
-  val knn2D = KNN()
+  var t02 = System.nanoTime()
+  val knn2 = KNN()
     .setK(3)
     .setBlocks(4)
     .setDistanceMetric(SquaredEuclideanDistanceMetric())
 
-  // ACTUAL kNN COMPUTATION
-  // run knn join
-  knn2D.fit(trainingSet2)
-  val result2D = knn2D.predict(testingSet2).collect()
+  knn2.fit(trainingSet2)
+  val result2 = knn2.predict(testingSet2).collect()
 
-  var tf2D = System.nanoTime()
+  var tf2 = System.nanoTime()
 
-
-
-  //////////////////////////////////////////3d
-  var t03D = System.nanoTime()
-  //// ACTUAL CALL TO kNN
-  ///FIRST SET UP PARAMETERS
-  val knn3D = KNN()
+  //////////////////////////////////////////3
+  var t03 = System.nanoTime()
+  val knn3 = KNN()
     .setK(3)
     .setBlocks(4)
     .setDistanceMetric(SquaredEuclideanDistanceMetric())
 
-  // ACTUAL kNN COMPUTATION
-  // run knn join
-  knn3D.fit(trainingSet3)
-  val result3D = knn3D.predict(testingSet3).collect()
+  knn3.fit(trainingSet3)
+  val result3 = knn3.predict(testingSet3).collect()
 
-  var tf3D = System.nanoTime()
+  var tf3 = System.nanoTime()
 
-
-
-  //////////////////////////////////////////4d
-  var t04D = System.nanoTime()
-  //// ACTUAL CALL TO kNN
-  ///FIRST SET UP PARAMETERS
-  val knn4D = KNN()
+  //////////////////////////////////////////4
+  var t04 = System.nanoTime()
+  val knn4 = KNN()
     .setK(3)
     .setBlocks(4)
     .setDistanceMetric(SquaredEuclideanDistanceMetric())
 
-  // ACTUAL kNN COMPUTATION
-  // run knn join
-  knn4D.fit(trainingSet4)
-  val result4D = knn4D.predict(testingSet4).collect()
+  knn4.fit(trainingSet4)
+  val result4 = knn4.predict(testingSet4).collect()
 
-  var tf4D = System.nanoTime()
+  var tf4 = System.nanoTime()
 
-  println("Elapsed time first 2D =       : " + (tf - t0)/1000000000 + "s")
-  println("Elapsed time 2D =       : " + (tf2D - t02D)/1000000000 + "s")
-  println("Elapsed time 3D =       : " + (tf3D - t03D)/1000000000 + "s")
-  println("Elapsed time 4D =       : " + (tf4D - t04D)/1000000000 + "s")
+  println("Elapsed time 1 =       : " + (tf - t0)/1000000000 + "s")
+  println("Elapsed time 2 =       : " + (tf2 - t02)/1000000000 + "s")
+  println("Elapsed time 3 =       : " + (tf3 - t03)/1000000000 + "s")
+  println("Elapsed time 4 =       : " + (tf4 - t04)/1000000000 + "s")
 
   println("")
 }
