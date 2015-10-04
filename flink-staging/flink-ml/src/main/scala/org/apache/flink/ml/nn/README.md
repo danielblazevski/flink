@@ -51,12 +51,13 @@ A quadtree is a dymically contructed object on the training set, and start by fo
 
 The intuitive idea of partitioning the training set into smaller sub-boxes is appealing, though there are some notable challenges in using the quadtree for the kNN query, namely some of the k-nearest neighbors may not be in the minimal bounding box of the gold star.  The following digram, for example, shows red points in the training set that are closest to the test point:
 
+![](img/quadtree-challenge-ref.png)
+
 A clean efficient way to search both in a test point's minimal bounding box *and* surrounding area is needed.  Defining the "surounding area" of a test point is in fact the most delicate part.  The siblings
 
 The leaf-nodes of the quadtree are the only nodes containing a non-empty collection of objects in the training set, and the key to defining the "surrounding area" of a test point is to construct a min-heap on the leaf nodes of the siblings belonging to the minimal bounding box in which a given test point lies in.
 
-![](img/auxiliariy-heap.png)
-
+![](img/auxiliary_heap.png)
 
 In Scala, the min-heap is defined on tuples of doubles and nodes of the tree
 ```scala
