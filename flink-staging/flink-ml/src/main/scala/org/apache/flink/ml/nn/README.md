@@ -42,8 +42,7 @@ https://www.cs.utah.edu/~lifeifei/papers/mrknnj.pdf
 
 ## 4. Distributed quadtree kNN
 
-Even when distributed, the brute-force approach to kNN can be time-comsuming if each distributed block of the training set `A_i` is large due to the excessive number of pairwise distance computations.  
-To reduce the complexity of the kNN query, a quadtree is formed for each block `A_i` of the training set. 
+Even when distributed, the brute-force approach to kNN can be time-comsuming if each distributed block of the training set `A_i` is large due to the excessive number of pairwise distance computations.  To reduce the complexity of the kNN query, a quadtree is formed for each block `A_i` of the training set. 
 
 A quadtree is a dymically contructed object on the training set, and start by forming a bounding box on the training set: once the boundign box has more than some specified value `maxPerBox` of training set points, the box is partitioned into equal sub-boxes.  Once each sub-box has more than `maxPerBox` training points, it is further partioned, as demnonstrated by the green sub-boxes in the diagram
 
