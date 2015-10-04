@@ -14,7 +14,7 @@ For my Insight Data Engineering project, I coordinated with the Flink community 
 
 ![](img/streaming-venn-resize.png)
 
-The result is lower latency and higher throughput than existing technologies.  In December of 2014, the Apache Software Foundation announced Flink a top-level project.  In Flink's JIRA page
+The result is lower latency and higher throughput than existing technologies.  In December of 2014, the Apache Software Foundation announced Flink a top-level project.  In Flink's JIRA page,
 an exact kNN algorithm is labeled a major priority for the project, and inintial progress was already made using a brute-force method found here
 https://github.com/chiwanpark/flink/tree/FLINK-1745/flink-staging/flink-ml/src/main/scala/org/apache/flink/ml/nn
 
