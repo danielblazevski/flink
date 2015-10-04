@@ -68,7 +68,7 @@ The `Double` of the tuple is defined as a suitable notion of the distance from a
 ```
 where `Vector` is a Flink data type corresponding the the object type.  The defining property of `minDist` is that every point inside the rectangle has distance to `obj` greater than `minDist`.  
 
-## Other Remarks
+## 5. Other Remarks
 
 ### Tests
 Many tests and files used to bencmark the kNN algorithm can be found here:
