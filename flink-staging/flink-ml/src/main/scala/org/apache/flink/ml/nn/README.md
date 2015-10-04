@@ -7,7 +7,7 @@ Table of Contents:
 2. [Brute-force kNN](README.md#2-brute-force-knn)
 3. [Distributed kNN](README.md#3-distributed-knn) 
 4. [Distributed kNN with a quadtree](README.md#4-distrubuted-knn-with-a-quadtree)
-5. [Other Remarks](README.md#4-other-remarks)
+5. [Other Remarks](README.md#5-other-remarks)
 
 ## 1. Introduction
 For my Insight Data Engineering project, I coordinated with the Flink community and worked on the k-nearest neighbors (kNN) algorithm.  Apache Flink is a promising and rapidly growing data processing engine, and the philosophy behind Flink is to view both streaming and batch processing in a purely streaming framework
