@@ -6,7 +6,7 @@ Table of Contents:
 1. [Introduction](README.md#1-introduction)
 2. [Brute-force kNN](README.md#2-brute-force-knn)
 3. [Distributed kNN](README.md#3-distributed-knn) 
-4. [Distributed quadtree kNN](README.md#4-distrubuted-quadtree-knn)
+5. [Distributed quadtree kNN](README.md#4-distributed-quadtree-knn)
 5. [Other Remarks](README.md#5-other-remarks)
 
 ## 1. Introduction
@@ -40,7 +40,7 @@ Details of this MapReduce style of distributing kNN can be found found here :
 
 https://www.cs.utah.edu/~lifeifei/papers/mrknnj.pdf
 
-## 4. Distributed quadtree kNN 
+## 4. Distributed quadtree kNN
 
 Even when distributed, the brute-force approach to kNN can be time-comsuming if each distributed block of the training set `A_i` is large due to the excessive number of pairwise distance computations.  
 To reduce the complexity of the kNN query, a quadtree is formed for each block `A_i` of the training set. 
