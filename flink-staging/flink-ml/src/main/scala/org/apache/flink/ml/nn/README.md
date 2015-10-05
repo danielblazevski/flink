@@ -1,7 +1,7 @@
 # Efficient k-Nearest Neighbors (kNN) algorithm using a quadtree for Apache Flink
 
 
-Table of Contents:
+## Table of Contents:
 
 1. [Introduction](README.md#1-introduction)
 2. [Brute-force kNN](README.md#2-brute-force-knn)
