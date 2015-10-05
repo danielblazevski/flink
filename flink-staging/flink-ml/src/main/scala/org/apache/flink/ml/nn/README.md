@@ -81,7 +81,7 @@ First Flink needs to be built from Source, as this is a development branch of th
 
 
 ### Link to presentations
-Here are links for presentations about my project (github.io renders better, esp the tree edges on the slide titled "Challenge":
+Here are links for presentations about my project (github.io renders better, esp the tree edges on the slide titled "Challenge"):
 
 http://danielblazevski.github.io
 
