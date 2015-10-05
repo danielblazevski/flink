@@ -18,7 +18,7 @@ The result is lower latency and higher throughput than existing technologies.  I
 an exact kNN algorithm is labeled a major priority for the project, and inintial progress was already made using a brute-force method found here
 https://github.com/chiwanpark/flink/tree/FLINK-1745/flink-staging/flink-ml/src/main/scala/org/apache/flink/ml/nn
 
-I coordinated with the Flink community to incorporate a quadtree to improve on what has already been done.  I made A pull request to merge my work on the kNN algorithm into Flink's master repo.
+I coordinated with the Flink community to incorporate a quadtree to improve on what has already been done.  I made a pull request to merge my work on the kNN algorithm into Flink's master repo.
 
 ## 2. Brute-force kNN
 
