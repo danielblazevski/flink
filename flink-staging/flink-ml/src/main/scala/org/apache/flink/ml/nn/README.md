@@ -60,11 +60,13 @@ In Scala, the min-heap is defined on tuples of doubles and nodes of the tree
 ```scala
   val nodeQueue = PriorityQueue[(Double, Node)]
 ```
-The `Double` of the tuple is defined as a suitable notion of the distance from a test point to a node, namely a method in the Node class is 
+The priority -- i.e. the `Double` of the `(Double, Node)` tuple --  is defined as a suitable notion of the distance from a test point to a node, namely a method in the Node class is 
 ``` scala
    minDist(obj: Vector)
 ```
-where `Vector` is a Flink data type corresponding the the object type.  The defining property of `minDist` is that every point inside the rectangle has distance to `obj` greater than `minDist`.  
+where `Vector` is a Flink data type.  The defining property of `minDist` is that every point inside the rectangle has distance to `obj` greater than `minDist`.  The definition of `minDist` can be found here:
+
+http://www.cs.umd.edu/~nick/papers/nnpaper.pdf
 
 ## 5. Other Remarks
 
